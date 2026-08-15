@@ -1,0 +1,23 @@
+name: 初始化股票池项目
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  unpack:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 解压项目文件
+        run: |
+          unzip -o stock-pool-free-github-pages-final.zip
+          rm stock-pool-free-github-pages-final.zip
+      - name: 提交完整项目
+        run: |
+          git config user.name "stock-pool-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "feat: initialize stock pool site"
+          git push
