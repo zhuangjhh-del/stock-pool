@@ -93,8 +93,10 @@ def market_weather(rows: list[dict], pro: object, today: date) -> dict:
         return {"status": "UNAVAILABLE", "label": "数据不足", "reason": f"无法取得三大指数20日均线数据：{exc}", "rising": rising, "falling": falling, "ratio": ratio, "indexes": []}
 
 
-def recent_history(pro: object, today: date) -> dict[str, list[dict]]:
+def recent_history(pro: object, today: date, cache: dict[str, list[dict]] | None = None) -> dict[str, list[dict]]:
     """Fetch enough free daily bars once per date to evaluate every sector candidate."""
+    if cache is not None:
+        return cache
     collected: dict[str, list[dict]] = {}
     for offset in range(90):  # about 64 trading days; stays below the free daily request limit
         frame = pro.daily(trade_date=(today - timedelta(days=offset)).strftime("%Y%m%d"))
@@ -194,7 +196,39 @@ def refresh_index() -> None:
     write_json(DATA / "history.json", history[:365])
 
 
+def backfill(days: int) -> int:
+    """Rebuild recent completed trade dates from free public historical sources."""
+    from eastmoney_boards import future_unlock_codes
+    from historical_boards import board_catalog, board_changes, historical_hot_sectors
+    cfg, now = load_config(), datetime.now(TZ)
+    dates, cursor = [], now.date() - timedelta(days=1)
+    while len(dates) < days:
+        if is_trade_day(cursor, cfg):
+            dates.append(cursor)
+        cursor -= timedelta(days=1)
+    import tushare as ts
+    token = os.environ.get("TUSHARE_TOKEN")
+    if not token:
+        raise RuntimeError("未设置 TUSHARE_TOKEN GitHub Secret")
+    pro, catalog = ts.pro_api(token), board_catalog()
+    rankings = board_changes(catalog, {item.isoformat() for item in dates})
+    # One 90-calendar-day download covers the whole 10-day window.  Each date
+    # below is then clipped so later bars cannot leak into an earlier result.
+    cache = recent_history(pro, max(dates))
+    for day in reversed(dates):
+        rows = pro.daily(trade_date=day.strftime("%Y%m%d")).to_dict(orient="records")
+        basics = pro.daily_basic(trade_date=day.strftime("%Y%m%d"), fields="ts_code,turnover_rate,total_mv").to_dict(orient="records")
+        day_key = day.strftime("%Y%m%d")
+        day_history = {code: [bar for bar in bars if str(bar["trade_date"]) <= day_key] for code, bars in cache.items()}
+        row_map, basic_map = ({str(row["ts_code"]): row for row in rows}, {str(row["ts_code"]): row for row in basics})
+        payload = {"run_id": day.isoformat(), "updated_at": now.isoformat(), "timezone": "Asia/Shanghai", "strategy": cfg["strategy"], "source": "免费公开历史数据（东方财富/AKShare 口径 + Tushare日线）", "status": "SUCCESS", "total_scanned": len(rows), "market_weather": market_weather(rows, pro, day), "hot_sectors": historical_hot_sectors(day, rankings.get(day.isoformat(), []), row_map, basic_map, day_history, future_unlock_codes(day)), "stocks": []}
+        write_json(RUNS / f"{day.isoformat()}.json", payload)
+    refresh_index()
+    return 0
+
+
 if __name__ == "__main__":
     LOGS.mkdir(exist_ok=True)
     logging.basicConfig(filename=LOGS / "selection.log", level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
-    sys.exit(execute())
+    requested_backfill = int(os.environ.get("BACKFILL_DAYS", "0"))
+    sys.exit(backfill(requested_backfill) if requested_backfill else execute())
