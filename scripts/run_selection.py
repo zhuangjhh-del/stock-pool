@@ -93,10 +93,34 @@ def market_weather(rows: list[dict], pro: object, today: date) -> dict:
         return {"status": "UNAVAILABLE", "label": "数据不足", "reason": f"无法取得三大指数20日均线数据：{exc}", "rising": rising, "falling": falling, "ratio": ratio, "indexes": []}
 
 
-def hot_sectors() -> dict:
+def recent_history(pro: object, today: date) -> dict[str, list[dict]]:
+    """Fetch enough free daily bars once per date to evaluate every sector candidate."""
+    collected: dict[str, list[dict]] = {}
+    for offset in range(90):  # about 64 trading days; stays below the free daily request limit
+        frame = pro.daily(trade_date=(today - timedelta(days=offset)).strftime("%Y%m%d"))
+        for row in frame.to_dict(orient="records"):
+            collected.setdefault(str(row["ts_code"]), []).append(row)
+    for rows in collected.values():
+        rows.sort(key=lambda item: item["trade_date"])
+    return collected
+
+
+def hot_sectors(pro: object, today: date) -> dict:
     try:
-        from eastmoney_boards import scan_hot_sectors
-        return scan_hot_sectors()
+        from eastmoney_boards import future_unlock_codes, scan_hot_sectors
+        from technical_filters import evaluate
+        data = scan_hot_sectors()
+        unlocks, history = future_unlock_codes(today), recent_history(pro, today)
+        selected, seen = [], set()
+        for candidate in data.pop("candidates", []):
+            if candidate["code"] in seen:
+                continue
+            seen.add(candidate["code"])
+            passed, reason = evaluate(candidate, history.get(candidate["code"], []), unlocks)
+            if passed:
+                selected.append({"ts_code": candidate["code"], "name": candidate["name"], "board": candidate["board"], "pct_chg": candidate["pct_chg"], "reason": reason})
+        data["selected_stocks"] = selected
+        return data
     except Exception as exc:
         return {"status": "UNAVAILABLE", "rule": "行业板块涨幅前5；板块内涨停个股不少于3只", "top_boards": [], "mainlines": [], "reason": f"热点板块扫描失败：{exc}"}
 
@@ -147,7 +171,7 @@ def execute() -> int:
             time.sleep(delay)
         try:
             rows, pro = fetch_daily(now.strftime("%Y%m%d"))
-            payload = {**metadata, "status": "SUCCESS", "total_scanned": len(rows), "market_weather": market_weather(rows, pro, now.date()), "hot_sectors": hot_sectors(), "stocks": select(rows, cfg)}
+            payload = {**metadata, "status": "SUCCESS", "total_scanned": len(rows), "market_weather": market_weather(rows, pro, now.date()), "hot_sectors": hot_sectors(pro, now.date()), "stocks": select(rows, cfg)}
             write_json(RUNS / f"{run_id}.json", payload)
             write_json(DATA / "latest.json", payload)
             refresh_index()
