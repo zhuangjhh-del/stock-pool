@@ -153,15 +153,24 @@ def select(rows: list[dict], cfg: dict) -> list[dict]:
     return selected[: int(cfg["strategy"]["max_results"])]
 
 
-def execute() -> int:
+def latest_completed_trade_day(today: date, cfg: dict) -> date:
+    """Return today when open, otherwise the most recent market trading day."""
+    candidate = today
+    while not is_trade_day(candidate, cfg):
+        candidate -= timedelta(days=1)
+    return candidate
+
+
+def execute(latest_completed: bool = False) -> int:
     cfg = load_config()
     now = datetime.now(TZ)
-    run_id = now.strftime("%Y-%m-%d")
+    target_day = latest_completed_trade_day(now.date(), cfg) if latest_completed else now.date()
+    run_id = target_day.strftime("%Y-%m-%d")
     metadata = {
         "run_id": run_id, "updated_at": now.isoformat(), "timezone": "Asia/Shanghai",
         "strategy": cfg["strategy"], "source": "Tushare A股日线（盘后数据）",
     }
-    if not is_trade_day(now.date(), cfg):
+    if not is_trade_day(target_day, cfg):
         payload = {**metadata, "status": "SKIPPED", "reason": "非交易日、节假日或配置的休市日", "market_weather": {"status": "CLOSED", "label": "休市", "reason": "非交易日、节假日或配置的休市日", "indexes": []}, "stocks": []}
         write_json(RUNS / f"{run_id}.json", payload)
         write_json(DATA / "latest.json", payload)
@@ -172,8 +181,8 @@ def execute() -> int:
         if delay:
             time.sleep(delay)
         try:
-            rows, pro = fetch_daily(now.strftime("%Y%m%d"))
-            payload = {**metadata, "status": "SUCCESS", "total_scanned": len(rows), "market_weather": market_weather(rows, pro, now.date()), "hot_sectors": hot_sectors(pro, now.date()), "stocks": select(rows, cfg)}
+            rows, pro = fetch_daily(target_day.strftime("%Y%m%d"))
+            payload = {**metadata, "status": "SUCCESS", "total_scanned": len(rows), "market_weather": market_weather(rows, pro, target_day), "hot_sectors": hot_sectors(pro, target_day), "stocks": select(rows, cfg)}
             write_json(RUNS / f"{run_id}.json", payload)
             write_json(DATA / "latest.json", payload)
             refresh_index()
@@ -231,4 +240,5 @@ if __name__ == "__main__":
     LOGS.mkdir(exist_ok=True)
     logging.basicConfig(filename=LOGS / "selection.log", level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     requested_backfill = int(os.environ.get("BACKFILL_DAYS", "0"))
-    sys.exit(backfill(requested_backfill) if requested_backfill else execute())
+    latest_completed = os.environ.get("RUN_LATEST_COMPLETED", "").lower() == "true"
+    sys.exit(backfill(requested_backfill) if requested_backfill else execute(latest_completed))
