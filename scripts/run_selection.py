@@ -93,6 +93,14 @@ def market_weather(rows: list[dict], pro: object, today: date) -> dict:
         return {"status": "UNAVAILABLE", "label": "数据不足", "reason": f"无法取得三大指数20日均线数据：{exc}", "rising": rising, "falling": falling, "ratio": ratio, "indexes": []}
 
 
+def hot_sectors() -> dict:
+    try:
+        from eastmoney_boards import scan_hot_sectors
+        return scan_hot_sectors()
+    except Exception as exc:
+        return {"status": "UNAVAILABLE", "rule": "行业板块涨幅前5；板块内涨停个股不少于3只", "top_boards": [], "mainlines": [], "reason": f"热点板块扫描失败：{exc}"}
+
+
 def select(rows: list[dict], cfg: dict) -> list[dict]:
     f = cfg["strategy"]["filters"]
     prefixes = tuple(cfg["strategy"].get("exclude_prefixes", []))
@@ -139,7 +147,7 @@ def execute() -> int:
             time.sleep(delay)
         try:
             rows, pro = fetch_daily(now.strftime("%Y%m%d"))
-            payload = {**metadata, "status": "SUCCESS", "total_scanned": len(rows), "market_weather": market_weather(rows, pro, now.date()), "stocks": select(rows, cfg)}
+            payload = {**metadata, "status": "SUCCESS", "total_scanned": len(rows), "market_weather": market_weather(rows, pro, now.date()), "hot_sectors": hot_sectors(), "stocks": select(rows, cfg)}
             write_json(RUNS / f"{run_id}.json", payload)
             write_json(DATA / "latest.json", payload)
             refresh_index()
