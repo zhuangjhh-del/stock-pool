@@ -9,6 +9,11 @@ on:
         description: "免费历史回填交易日数量（留空则更新当日）"
         required: false
         default: ""
+      latest_completed:
+        description: "运行最近一个已收盘交易日（周末/节假日可用）"
+        type: boolean
+        required: false
+        default: false
 
 permissions:
   contents: write
@@ -33,6 +38,7 @@ jobs:
         env:
           TUSHARE_TOKEN: ${{ secrets.TUSHARE_TOKEN }}
           BACKFILL_DAYS: ${{ inputs.backfill_days }}
+          RUN_LATEST_COMPLETED: ${{ inputs.latest_completed }}
         run: python scripts/run_selection.py
       - name: 保存结果、历史与日志
         if: always()
