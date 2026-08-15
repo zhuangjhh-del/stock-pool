@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+import socket
 import sys
 import time
 from datetime import date, datetime, timedelta
@@ -113,13 +114,18 @@ def candidate_history(pro: object, codes: set[str], today: date) -> dict[str, li
     cached = json.loads(HISTORY_CACHE.read_text(encoding="utf-8")) if HISTORY_CACHE.exists() else {}
     today_key = today.strftime("%Y%m%d")
     stale = [code for code in codes if not cached.get(code) or str(cached[code][-1]["trade_date"]) < today_key]
-    for index in range(0, len(stale), 50):
-        batch = stale[index:index + 50]
+    socket.setdefaulttimeout(25)
+    for index in range(0, len(stale), 10):
+        batch = stale[index:index + 10]
         # A new candidate needs 60+ bars. Existing cache entries only request
         # the most recent days and are merged below.
         missing = [code for code in batch if not cached.get(code)]
         start = (today - timedelta(days=105)).strftime("%Y%m%d") if missing else (today - timedelta(days=7)).strftime("%Y%m%d")
-        frame = pro.daily(ts_code=",".join(batch), start_date=start, end_date=today_key)
+        try:
+            frame = pro.daily(ts_code=",".join(batch), start_date=start, end_date=today_key)
+        except Exception as exc:
+            logging.warning("candidate history batch skipped (%s): %s", ",".join(batch), exc)
+            continue
         for row in frame.to_dict(orient="records"):
             code = str(row["ts_code"])
             existing = {str(item["trade_date"]): item for item in cached.get(code, [])}
