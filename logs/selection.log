@@ -31,3 +31,36 @@ Traceback (most recent call last):
   File "/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/tushare/pro/client.py", line 46, in query
     raise Exception(result['msg'])
 Exception: 抱歉，您没有接口(daily)访问权限，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-08-15 17:28:29,897 ERROR selection attempt failed
+Traceback (most recent call last):
+  File "/home/runner/work/stock-pool/stock-pool/scripts/run_selection.py", line 208, in execute
+    rows, pro = fetch_daily(target_day.strftime("%Y%m%d"))
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/stock-pool/stock-pool/scripts/run_selection.py", line 66, in fetch_daily
+    frame = pro.daily(trade_date=trade_date)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/tushare/pro/client.py", line 46, in query
+    raise Exception(result['msg'])
+Exception: 抱歉，您没有接口(daily)访问权限，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-08-15 17:33:31,136 ERROR selection attempt failed
+Traceback (most recent call last):
+  File "/home/runner/work/stock-pool/stock-pool/scripts/run_selection.py", line 208, in execute
+    rows, pro = fetch_daily(target_day.strftime("%Y%m%d"))
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/stock-pool/stock-pool/scripts/run_selection.py", line 66, in fetch_daily
+    frame = pro.daily(trade_date=trade_date)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/tushare/pro/client.py", line 46, in query
+    raise Exception(result['msg'])
+Exception: 抱歉，您没有接口(daily)访问权限，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-08-15 17:48:32,088 ERROR selection attempt failed
+Traceback (most recent call last):
+  File "/home/runner/work/stock-pool/stock-pool/scripts/run_selection.py", line 208, in execute
+    rows, pro = fetch_daily(target_day.strftime("%Y%m%d"))
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/stock-pool/stock-pool/scripts/run_selection.py", line 66, in fetch_daily
+    frame = pro.daily(trade_date=trade_date)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/tushare/pro/client.py", line 46, in query
+    raise Exception(result['msg'])
+Exception: 抱歉，您没有接口(daily)访问权限，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
