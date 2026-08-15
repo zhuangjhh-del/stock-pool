@@ -239,6 +239,6 @@ def backfill(days: int) -> int:
 if __name__ == "__main__":
     LOGS.mkdir(exist_ok=True)
     logging.basicConfig(filename=LOGS / "selection.log", level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
-    requested_backfill = int(os.environ.get("BACKFILL_DAYS", "0"))
+    requested_backfill = int(os.environ.get("BACKFILL_DAYS") or "0")
     latest_completed = os.environ.get("RUN_LATEST_COMPLETED", "").lower() == "true"
     sys.exit(backfill(requested_backfill) if requested_backfill else execute(latest_completed))
