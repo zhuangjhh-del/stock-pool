@@ -1,14 +1,23 @@
 name: 更新股票池
+
 on:
   schedule:
-    - cron: "15 7 * * 1-5"
+    - cron: "15 7 * * 1-5" # 15:15 Asia/Shanghai (UTC+8)
   workflow_dispatch:
+    inputs:
+      backfill_days:
+        description: "免费历史回填交易日数量（留空则更新当日）"
+        required: false
+        default: ""
+
 permissions:
   contents: write
   issues: write
+
 concurrency:
   group: stock-pool-update
   cancel-in-progress: false
+
 jobs:
   update:
     runs-on: ubuntu-latest
@@ -20,8 +29,10 @@ jobs:
           cache: pip
       - run: pip install -r requirements.txt
       - name: 执行选股（内置 3 次重试）
+        id: selection
         env:
           TUSHARE_TOKEN: ${{ secrets.TUSHARE_TOKEN }}
+          BACKFILL_DAYS: ${{ inputs.backfill_days }}
         run: python scripts/run_selection.py
       - name: 保存结果、历史与日志
         if: always()
