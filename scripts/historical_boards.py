@@ -20,9 +20,18 @@ KLINE_URL = "https://push2his.eastmoney.com/api/qt/stock/kline/get"
 
 
 def _get(url: str, params: dict[str, Any]) -> dict[str, Any]:
+    """Fetch a public endpoint conservatively; transient disconnects are common."""
     request = Request(f"{url}?{urlencode(params)}", headers={"User-Agent": "stock-pool-research/1.0"})
-    with urlopen(request, timeout=25) as response:  # nosec: fixed HTTPS endpoint
-        return json.loads(response.read().decode("utf-8"))
+    last_error: Exception | None = None
+    for delay in (0, 2, 6, 15):
+        if delay:
+            time.sleep(delay)
+        try:
+            with urlopen(request, timeout=30) as response:  # nosec: fixed HTTPS endpoint
+                return json.loads(response.read().decode("utf-8"))
+        except Exception as exc:  # the public Eastmoney edge occasionally closes keep-alive requests
+            last_error = exc
+    raise RuntimeError(f"东方财富历史板块请求连续失败：{last_error}")
 
 
 def board_catalog() -> list[dict[str, str]]:
@@ -42,7 +51,7 @@ def board_changes(catalog: list[dict[str, str]], dates: set[str]) -> dict[str, l
             values = line.split(",")
             if len(values) >= 9 and values[0] in by_day:
                 by_day[values[0]].append({**board, "pct_chg": float(values[8] or 0)})
-        time.sleep(0.12)
+        time.sleep(0.45)
     return {day: sorted(items, key=lambda item: item["pct_chg"], reverse=True)[:5] for day, items in by_day.items()}
 
 
