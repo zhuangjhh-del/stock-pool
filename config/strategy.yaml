@@ -1,0 +1,17 @@
+strategy:
+  name: "示例：温和动量筛选"
+  version: "0.1.0"
+  max_results: 30
+  exclude_prefixes: ["4", "8"] # 默认排除北交所；删除此项可纳入
+  filters:
+    min_close: 3.0
+    min_amount_thousand_yuan: 100000 # 1 亿元；Tushare amount 的单位为千元
+    min_pct_chg: 0.5
+    max_pct_chg: 7.0
+    min_price_position: 0.55 # (close-low)/(high-low)，避免收盘接近日内低点
+market:
+  timezone: Asia/Shanghai
+  scheduled_time: "15:15"
+  # 临时休市或补班交易日写在这里；优先级高于节假日库
+  forced_closed_dates: []
+  forced_open_dates: []
