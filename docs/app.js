@@ -4,14 +4,16 @@ async function render() {
   try {
     const [latest, history] = await Promise.all([get('data/latest.json'), get('data/history.json')]);
     document.querySelector('#summary').textContent = latest.updated_at ? `最后更新：${new Date(latest.updated_at).toLocaleString('zh-CN', {timeZone:'Asia/Shanghai', hour12:false})}` : '尚未运行';
-    document.querySelector('#status').innerHTML = `<p class="muted">状态：${latest.status}　扫描：${latest.total_scanned ?? 0} 只　入选：${latest.stocks.length} 只</p>`;
+    const stocks = Array.isArray(latest.stocks) ? latest.stocks : [];
+    const statusReason = latest.reason ? `<p class="muted">${latest.reason}</p>` : '';
+    document.querySelector('#status').innerHTML = `<p class="muted">状态：${latest.status ?? '尚未运行'}　扫描：${latest.total_scanned ?? 0} 只　入选：${stocks.length} 只</p>${statusReason}`;
     const weather = latest.market_weather;
     document.querySelector('#weather').innerHTML = weather ? `<span class="weather-label">${weather.label}</span><p>${weather.reason}</p><p class="weather-metrics">上涨 ${weather.rising ?? '—'} 家 / 下跌 ${weather.falling ?? '—'} 家　涨跌比：${weather.ratio ? `${weather.ratio}:1` : '—'}</p><div class="weather-indexes">${(weather.indexes || []).map(i => `<span>${i.name} ${i.close} / MA20 ${i.ma20}（${i.above_ma20 ? '上方' : '下方'}）</span>`).join('')}</div>` : '<p class="muted">首次交易日更新后显示。</p>';
     const sectors = latest.hot_sectors;
     document.querySelector('#sectors').innerHTML = sectors ? `<p>${sectors.rule}</p><p class="weather-metrics">${sectors.reason}</p><div class="weather-indexes">${(sectors.top_boards || []).map(s => `<span>${s.name} ${s.pct_chg}% · 涨停 ${s.limit_up_count} 只</span>`).join('') || '暂无可用板块数据'}</div><p><strong>本日主线：</strong>${(sectors.mainlines || []).map(s => s.name).join('、') || '暂未锁定'}</p>${(sectors.selected_stocks || []).length ? `<table><thead><tr><th>代码</th><th>名称</th><th>主线板块</th><th>推荐理由</th></tr></thead><tbody>${sectors.selected_stocks.map(s => `<tr><td>${s.ts_code}</td><td>${s.name}</td><td>${s.board}</td><td>${s.reason}</td></tr>`).join('')}</tbody></table>` : '<p class="muted">主线板块内暂无股票同时满足全部12项条件。</p>'}` : '<p class="muted">首次交易日更新后显示。</p>';
     document.querySelector('#strategy').textContent = latest.strategy ? `${latest.strategy.name}（版本 ${latest.strategy.version}）` : '首次运行后显示';
-    document.querySelector('#stocks').innerHTML = latest.stocks.length ? latest.stocks.map(s => `<tr><td>${s.ts_code}</td><td>${s.name}</td><td>${s.close}</td><td class="${s.pct_chg >= 0 ? 'positive':'negative'}">${s.pct_chg}%</td><td>${money(s.amount_yuan)}</td><td>${s.reason}</td></tr>`).join('') : '<tr><td colspan="6" class="muted">暂无可展示的股票池结果。</td></tr>';
-    document.querySelector('#history').innerHTML = history.map(h => `<li>${h.run_id} · ${h.status} · ${h.count} 只</li>`).join('') || '<li>暂无历史记录</li>';
+    document.querySelector('#stocks').innerHTML = stocks.length ? stocks.map(s => `<tr><td>${s.ts_code}</td><td>${s.name}</td><td>${s.close}</td><td class="${s.pct_chg >= 0 ? 'positive':'negative'}">${s.pct_chg}%</td><td>${money(s.amount_yuan)}</td><td>${s.reason}</td></tr>`).join('') : '<tr><td colspan="6" class="muted">暂无可展示的股票池结果。</td></tr>';
+    document.querySelector('#history').innerHTML = (Array.isArray(history) ? history : []).map(h => `<li>${h.run_id} · ${h.status} · ${h.count} 只</li>`).join('') || '<li>暂无历史记录</li>';
   } catch { document.querySelector('#summary').textContent = '数据暂时不可用，请稍后刷新。'; }
 }
 render();
