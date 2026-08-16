@@ -218,7 +218,28 @@ def execute(latest_completed: bool = False) -> int:
         except Exception as exc:  # retries intentionally cover network and delayed data ingestion
             error = str(exc)
             logging.exception("selection attempt failed")
-    payload = {**metadata, "status": "FAILED", "reason": error, "stocks": []}
+    # Keep the published JSON schema complete on a transient source outage.
+    # The static site can then render a clear status instead of failing while
+    # trying to access optional market/board fields.
+    payload = {
+        **metadata,
+        "status": "FAILED",
+        "reason": f"行情源暂时不可用：{error}",
+        "total_scanned": 0,
+        "market_weather": {
+            "status": "UNAVAILABLE", "label": "数据暂不可用",
+            "reason": "本次行情获取失败，等待下一次自动重试。",
+            "rising": 0, "falling": 0, "ratio": None, "indexes": [],
+        },
+        "hot_sectors": {
+            "status": "UNAVAILABLE",
+            "rule": "行业板块涨幅前5；板块内涨停个股不少于3只",
+            "top_boards": [], "mainlines": [],
+            "reason": "本次行情获取失败，等待下一次自动重试。",
+            "selected_stocks": [],
+        },
+        "stocks": [],
+    }
     write_json(RUNS / f"{run_id}.json", payload)
     write_json(DATA / "latest.json", payload)
     refresh_index()
