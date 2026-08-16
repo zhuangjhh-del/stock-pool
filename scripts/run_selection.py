@@ -58,14 +58,24 @@ def is_trade_day(today: date, cfg: dict) -> bool:
     return is_workday(today)
 
 
-def fetch_daily(trade_date: str) -> tuple[list[dict], object]:
-    from eastmoney_boards import _request, _symbol
-    data = _request({"pn": 1, "pz": 6000, "po": 1, "np": 1, "fltt": 2, "fid": "f3", "fs": "m:0+t:6,m:0+t:13,m:0+t:80,m:1+t:2,m:1+t:23", "fields": "f2,f3,f6,f12,f13,f14,f15,f16"})
-    rows = []
-    for item in data.get("data", {}).get("diff", []) or []:
-        rows.append({"ts_code": _symbol(item), "high": item.get("f15") or 0, "low": item.get("f16") or 0, "close": item.get("f2") or 0, "amount": (float(item.get("f6") or 0) / 1000), "pct_chg": item.get("f3") or 0})
-    if not rows: raise RuntimeError("东方财富未返回全市场实时行情")
-    return rows, None
+def fetch_daily(trade_date: str) -> tuple[list[dict], object, str]:
+    """Use independent providers so a single Eastmoney outage cannot stop publishing."""
+    errors = []
+    try:
+        from sina_market import fetch_all
+        return fetch_all(), None, "新浪财经全市场实时行情（研究展示）"
+    except Exception as exc:
+        errors.append(f"新浪：{exc}")
+    try:
+        from eastmoney_boards import _request, _symbol
+        data = _request({"pn": 1, "pz": 6000, "po": 1, "np": 1, "fltt": 2, "fid": "f3", "fs": "m:0+t:6,m:0+t:13,m:0+t:80,m:1+t:2,m:1+t:23", "fields": "f2,f3,f6,f12,f13,f14,f15,f16"})
+        rows = [{"ts_code": _symbol(item), "high": item.get("f15") or 0, "low": item.get("f16") or 0, "close": item.get("f2") or 0, "amount": float(item.get("f6") or 0) / 1000, "pct_chg": item.get("f3") or 0} for item in data.get("data", {}).get("diff", []) or []]
+        if rows:
+            return rows, None, "东方财富全市场实时行情（备用）"
+        raise RuntimeError("未返回股票列表")
+    except Exception as exc:
+        errors.append(f"东方财富：{exc}")
+    raise RuntimeError("；".join(errors))
 
 
 def market_weather(rows: list[dict], pro: object, today: date) -> dict:
@@ -209,8 +219,8 @@ def execute(latest_completed: bool = False) -> int:
         if delay:
             time.sleep(delay)
         try:
-            rows, pro = fetch_daily(target_day.strftime("%Y%m%d"))
-            payload = {**metadata, "status": "SUCCESS", "total_scanned": len(rows), "market_weather": market_weather(rows, pro, target_day), "hot_sectors": hot_sectors(pro, target_day), "stocks": select(rows, cfg)}
+            rows, pro, source = fetch_daily(target_day.strftime("%Y%m%d"))
+            payload = {**metadata, "source": source, "status": "SUCCESS", "total_scanned": len(rows), "market_weather": market_weather(rows, pro, target_day), "hot_sectors": hot_sectors(pro, target_day), "stocks": select(rows, cfg)}
             write_json(RUNS / f"{run_id}.json", payload)
             write_json(DATA / "latest.json", payload)
             refresh_index()
