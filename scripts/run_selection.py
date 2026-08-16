@@ -74,11 +74,13 @@ def fetch_daily(trade_date: str) -> tuple[list[dict], object, str]:
             raise RuntimeError(f"行情覆盖不足（仅 {len(rows)} 只）")
         return rows, None, "AKShare A股全市场行情（盘后）"
     except Exception as exc:
+        logging.warning("AKShare 全市场行情不可用，切换备用源：%s", exc)
         errors.append(f"AKShare：{exc}")
     try:
         from sina_market import fetch_all
         return fetch_all(), None, "新浪财经全市场实时行情（研究展示）"
     except Exception as exc:
+        logging.warning("新浪全市场行情不可用，切换备用源：%s", exc)
         errors.append(f"新浪：{exc}")
     try:
         from eastmoney_boards import _request, _symbol
@@ -88,6 +90,7 @@ def fetch_daily(trade_date: str) -> tuple[list[dict], object, str]:
             return rows, None, "东方财富全市场实时行情（备用）"
         raise RuntimeError("未返回股票列表")
     except Exception as exc:
+        logging.warning("东方财富全市场行情不可用：%s", exc)
         errors.append(f"东方财富：{exc}")
     raise RuntimeError("；".join(errors))
 
