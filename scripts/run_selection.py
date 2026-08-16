@@ -59,15 +59,13 @@ def is_trade_day(today: date, cfg: dict) -> bool:
 
 
 def fetch_daily(trade_date: str) -> tuple[list[dict], object]:
-    import tushare as ts
-    token = os.environ.get("TUSHARE_TOKEN")
-    if not token:
-        raise RuntimeError("未设置 TUSHARE_TOKEN GitHub Secret")
-    pro = ts.pro_api(token)
-    frame = pro.daily(trade_date=trade_date)
-    if frame.empty:
-        raise RuntimeError("数据源尚未返回当日日线数据")
-    return frame.to_dict(orient="records"), pro
+    from eastmoney_boards import _request, _symbol
+    data = _request({"pn": 1, "pz": 6000, "po": 1, "np": 1, "fltt": 2, "fid": "f3", "fs": "m:0+t:6,m:0+t:13,m:0+t:80,m:1+t:2,m:1+t:23", "fields": "f2,f3,f6,f12,f13,f14,f15,f16"})
+    rows = []
+    for item in data.get("data", {}).get("diff", []) or []:
+        rows.append({"ts_code": _symbol(item), "high": item.get("f15") or 0, "low": item.get("f16") or 0, "close": item.get("f2") or 0, "amount": (float(item.get("f6") or 0) / 1000), "pct_chg": item.get("f3") or 0})
+    if not rows: raise RuntimeError("东方财富未返回全市场实时行情")
+    return rows, None
 
 
 def market_weather(rows: list[dict], pro: object, today: date) -> dict:
@@ -137,12 +135,12 @@ def candidate_history(pro: object, codes: set[str], today: date) -> dict[str, li
 
 def hot_sectors(pro: object, today: date) -> dict:
     try:
-        from eastmoney_boards import future_unlock_codes, scan_hot_sectors
+        from eastmoney_boards import candidate_kline, future_unlock_codes, scan_hot_sectors
         from technical_filters import evaluate
         data = scan_hot_sectors()
         candidates = data.pop("candidates", [])
         unlocks = future_unlock_codes(today)
-        history = candidate_history(pro, {item["code"] for item in candidates}, today)
+        history = candidate_kline({item["code"] for item in candidates}, today)
         selected, seen = [], set()
         for candidate in candidates:
             if candidate["code"] in seen:
