@@ -24,7 +24,7 @@ NAMES = ROOT / "config" / "stock_names.csv"
 TZ = ZoneInfo("Asia/Shanghai")
 # Tushare writes the daily bar after the close and its advertised window can extend
 # beyond 15:15.  This covers that window without publishing stale prior-day data.
-RETRIES = (0, 300, 900, 1800)  # first try, then 5, 15 and 30 minutes
+RETRIES = (0, 20, 60)
 INDEXES = {"000001.SH": "上证指数", "399001.SZ": "深证成指", "399006.SZ": "创业板指"}
 
 
@@ -138,7 +138,7 @@ def hot_sectors(pro: object, today: date) -> dict:
         from eastmoney_boards import candidate_kline, future_unlock_codes, scan_hot_sectors
         from technical_filters import evaluate
         data = scan_hot_sectors()
-        candidates = data.pop("candidates", [])
+        candidates = data.pop("candidates", [])[:30]
         unlocks = future_unlock_codes(today)
         history = candidate_kline({item["code"] for item in candidates}, today)
         selected, seen = [], set()
