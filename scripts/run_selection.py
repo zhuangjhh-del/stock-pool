@@ -59,8 +59,20 @@ def is_trade_day(today: date, cfg: dict) -> bool:
 
 
 def fetch_daily(trade_date: str) -> tuple[list[dict], object, str]:
-    """Use independent providers so a single Eastmoney outage cannot stop publishing."""
+    """Prefer Tushare's settled daily bars after close, with public fallbacks."""
     errors = []
+    try:
+        import tushare as ts
+        token = os.environ.get("TUSHARE_TOKEN")
+        if not token:
+            raise RuntimeError("未设置 TUSHARE_TOKEN")
+        pro = ts.pro_api(token)
+        frame = pro.daily(trade_date=trade_date)
+        if len(frame) < 2500:
+            raise RuntimeError(f"日线覆盖不足（仅 {len(frame)} 只）")
+        return frame.to_dict(orient="records"), pro, "Tushare A股日线（盘后收盘数据）"
+    except Exception as exc:
+        errors.append(f"Tushare：{exc}")
     try:
         from sina_market import fetch_all
         return fetch_all(), None, "新浪财经全市场实时行情（研究展示）"
