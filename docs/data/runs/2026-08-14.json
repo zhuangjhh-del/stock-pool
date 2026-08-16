@@ -1,6 +1,6 @@
 {
   "run_id": "2026-08-14",
-  "updated_at": "2026-08-16T15:48:43.415975+08:00",
+  "updated_at": "2026-08-16T15:52:49.503597+08:00",
   "timezone": "Asia/Shanghai",
   "strategy": {
     "name": "示例：温和动量筛选",
@@ -53,58 +53,11 @@
     ]
   },
   "hot_sectors": {
-    "status": "READY",
+    "status": "UNAVAILABLE",
     "rule": "行业板块涨幅前5；板块内涨停个股不少于3只",
-    "top_boards": [
-      {
-        "board_code": "BK1626",
-        "name": "稀土",
-        "pct_chg": 5.82,
-        "leader": "中国稀土",
-        "up_count": 4,
-        "down_count": 0,
-        "limit_up_count": 1
-      },
-      {
-        "board_code": "BK1592",
-        "name": "通信线缆及配套",
-        "pct_chg": 5.33,
-        "leader": "亨通光电",
-        "up_count": 13,
-        "down_count": 0,
-        "limit_up_count": 1
-      },
-      {
-        "board_code": "BK1409",
-        "name": "激光设备",
-        "pct_chg": 4.44,
-        "leader": "逸飞激光",
-        "up_count": 11,
-        "down_count": 0,
-        "limit_up_count": 0
-      },
-      {
-        "board_code": "BK1332",
-        "name": "电子化学品Ⅲ",
-        "pct_chg": 3.75,
-        "leader": "中石科技",
-        "up_count": 36,
-        "down_count": 1,
-        "limit_up_count": 2
-      },
-      {
-        "board_code": "BK1039",
-        "name": "电子化学品Ⅱ",
-        "pct_chg": 3.75,
-        "leader": "中石科技",
-        "up_count": 36,
-        "down_count": 1,
-        "limit_up_count": 2
-      }
-    ],
+    "top_boards": [],
     "mainlines": [],
-    "reason": "按板块涨幅排序，并以涨停数量确认资金共识",
-    "selected_stocks": []
+    "reason": "热点板块扫描失败：HTTP Error 502: Bad Gateway"
   },
   "stocks": [
     {
