@@ -59,20 +59,22 @@ def is_trade_day(today: date, cfg: dict) -> bool:
 
 
 def fetch_daily(trade_date: str) -> tuple[list[dict], object, str]:
-    """Prefer Tushare's settled daily bars after close, with public fallbacks."""
+    """Use AKShare full-market quotes, then independent public fallbacks."""
     errors = []
     try:
-        import tushare as ts
-        token = os.environ.get("TUSHARE_TOKEN")
-        if not token:
-            raise RuntimeError("未设置 TUSHARE_TOKEN")
-        pro = ts.pro_api(token)
-        frame = pro.daily(trade_date=trade_date)
-        if len(frame) < 2500:
-            raise RuntimeError(f"日线覆盖不足（仅 {len(frame)} 只）")
-        return frame.to_dict(orient="records"), pro, "Tushare A股日线（盘后收盘数据）"
+        import akshare as ak
+        frame = ak.stock_zh_a_spot()
+        rows = []
+        for item in frame.to_dict(orient="records"):
+            code = str(item.get("代码") or "")
+            if len(code) != 6 or not code.isdigit():
+                continue
+            rows.append({"ts_code": f"{code}.SH" if code.startswith("6") else f"{code}.SZ", "name": str(item.get("名称") or ""), "high": item.get("最高") or 0, "low": item.get("最低") or 0, "close": item.get("最新价") or 0, "amount": float(item.get("成交额") or 0) / 1000, "pct_chg": item.get("涨跌幅") or 0})
+        if len(rows) < 2500:
+            raise RuntimeError(f"行情覆盖不足（仅 {len(rows)} 只）")
+        return rows, None, "AKShare A股全市场行情（盘后）"
     except Exception as exc:
-        errors.append(f"Tushare：{exc}")
+        errors.append(f"AKShare：{exc}")
     try:
         from sina_market import fetch_all
         return fetch_all(), None, "新浪财经全市场实时行情（研究展示）"
@@ -96,12 +98,19 @@ def market_weather(rows: list[dict], pro: object, today: date) -> dict:
     ratio = None if falling == 0 else round(rising / falling, 2)
     try:
         values = []
-        start, end = (today - timedelta(days=45)).strftime("%Y%m%d"), today.strftime("%Y%m%d")
+        if pro is None:
+            from tencent_history import candidate_kline
+            source = candidate_kline(set(INDEXES), today)
+            frames = {code: source.get(code, []) for code in INDEXES}
+        else:
+            start, end = (today - timedelta(days=45)).strftime("%Y%m%d"), today.strftime("%Y%m%d")
+            frames = {code: pro.index_daily(ts_code=code, start_date=start, end_date=end).to_dict(orient="records") for code in INDEXES}
         for code, name in INDEXES.items():
-            frame = pro.index_daily(ts_code=code, start_date=start, end_date=end)
+            frame = frames[code]
             if len(frame) < 20:
                 raise RuntimeError(f"{name} 的有效日线不足 20 个交易日")
-            close, ma20 = float(frame.iloc[0]["close"]), float(frame.head(20)["close"].mean())
+            closes = [float(item["close"]) for item in frame]
+            close, ma20 = closes[-1], sum(closes[-20:]) / 20
             values.append({"code": code, "name": name, "close": round(close, 2), "ma20": round(ma20, 2), "above_ma20": close >= ma20})
         above_all, below_all = all(i["above_ma20"] for i in values), all(not i["above_ma20"] for i in values)
         if above_all and ratio is not None and ratio > 2:
@@ -157,7 +166,8 @@ def candidate_history(pro: object, codes: set[str], today: date) -> dict[str, li
 
 def hot_sectors(pro: object, today: date) -> dict:
     try:
-        from eastmoney_boards import candidate_kline, future_unlock_codes, scan_hot_sectors
+        from eastmoney_boards import future_unlock_codes, scan_hot_sectors
+        from tencent_history import candidate_kline
         from technical_filters import evaluate
         data = scan_hot_sectors()
         candidates = data.pop("candidates", [])[:30]
@@ -277,34 +287,8 @@ def refresh_index() -> None:
 
 
 def backfill(days: int) -> int:
-    """Rebuild recent completed trade dates from free public historical sources."""
-    from eastmoney_boards import future_unlock_codes
-    from historical_boards import board_catalog, board_changes, historical_hot_sectors
-    cfg, now = load_config(), datetime.now(TZ)
-    dates, cursor = [], now.date() - timedelta(days=1)
-    while len(dates) < days:
-        if is_trade_day(cursor, cfg):
-            dates.append(cursor)
-        cursor -= timedelta(days=1)
-    import tushare as ts
-    token = os.environ.get("TUSHARE_TOKEN")
-    if not token:
-        raise RuntimeError("未设置 TUSHARE_TOKEN GitHub Secret")
-    pro, catalog = ts.pro_api(token), board_catalog()
-    rankings = board_changes(catalog, {item.isoformat() for item in dates})
-    # One 90-calendar-day download covers the whole 10-day window.  Each date
-    # below is then clipped so later bars cannot leak into an earlier result.
-    cache = recent_history(pro, max(dates))
-    for day in reversed(dates):
-        rows = pro.daily(trade_date=day.strftime("%Y%m%d")).to_dict(orient="records")
-        basics = pro.daily_basic(trade_date=day.strftime("%Y%m%d"), fields="ts_code,turnover_rate,total_mv").to_dict(orient="records")
-        day_key = day.strftime("%Y%m%d")
-        day_history = {code: [bar for bar in bars if str(bar["trade_date"]) <= day_key] for code, bars in cache.items()}
-        row_map, basic_map = ({str(row["ts_code"]): row for row in rows}, {str(row["ts_code"]): row for row in basics})
-        payload = {"run_id": day.isoformat(), "updated_at": now.isoformat(), "timezone": "Asia/Shanghai", "strategy": cfg["strategy"], "source": "免费公开历史数据（东方财富/AKShare 口径 + Tushare日线）", "status": "SUCCESS", "total_scanned": len(rows), "market_weather": market_weather(rows, pro, day), "hot_sectors": historical_hot_sectors(day, rankings.get(day.isoformat(), []), row_map, basic_map, day_history, future_unlock_codes(day)), "stocks": []}
-        write_json(RUNS / f"{day.isoformat()}.json", payload)
-    refresh_index()
-    return 0
+    """Reserved until a free, licensed full-market historical feed is added."""
+    raise RuntimeError("历史批量回填暂不支持：已移除 Tushare 依赖；日常盘后更新使用 AKShare + 腾讯历史日线")
 
 
 if __name__ == "__main__":
