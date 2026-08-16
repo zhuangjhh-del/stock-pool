@@ -9,6 +9,7 @@ from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
 BASE_URL = "https://push2.eastmoney.com/api/qt/clist/get"
+KLINE_URL = "https://push2his.eastmoney.com/api/qt/stock/kline/get"
 MIN_INTERVAL_SECONDS = 1.2
 _last_request_at = 0.0
 
@@ -54,6 +55,33 @@ def future_unlock_codes(today: date, horizon_days: int = 90) -> set[str]:
         payload = json.loads(response.read().decode("utf-8"))
     rows = payload.get("result", {}).get("data", []) or []
     return {str(row["SECURITY_CODE"]) for row in rows if row.get("SECURITY_CODE")}
+
+
+def candidate_kline(codes: set[str], today: date) -> dict[str, list[dict]]:
+    """Low-volume, timeout-bounded historical K-lines for hot-board candidates."""
+    output: dict[str, list[dict]] = {}
+    begin = (today - timedelta(days=110)).strftime("%Y%m%d")
+    for code in codes:
+        secid = ("1." if code.endswith(".SH") else "0.") + code.split(".")[0]
+        try:
+            payload = _request_kline({"secid": secid, "klt": 101, "fqt": 0, "beg": begin, "end": today.strftime("%Y%m%d"), "lmt": 150, "fields1": "f1,f2,f3,f4,f5,f6", "fields2": "f51,f52,f53,f54,f55,f56,f57,f58,f59,f60,f61"})
+            rows = []
+            previous = None
+            for line in payload.get("data", {}).get("klines", []) or []:
+                p = line.split(",")
+                if len(p) < 6: continue
+                rows.append({"trade_date": p[0].replace("-", ""), "open": p[1], "close": p[2], "high": p[3], "low": p[4], "vol": p[5], "pre_close": previous or p[2]})
+                previous = p[2]
+            output[code] = rows
+        except Exception:
+            continue
+    return output
+
+
+def _request_kline(params: dict[str, Any]) -> dict[str, Any]:
+    request = Request(f"{KLINE_URL}?{urlencode(params)}", headers={"User-Agent": "Mozilla/5.0", "Referer": "https://quote.eastmoney.com/"})
+    with urlopen(request, timeout=25) as response:  # nosec: fixed HTTPS endpoint
+        return json.loads(response.read().decode("utf-8"))
 
 
 def scan_hot_sectors() -> dict[str, Any]:
