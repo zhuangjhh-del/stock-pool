@@ -1,6 +1,6 @@
 {
   "run_id": "2026-08-14",
-  "updated_at": "2026-08-16T04:31:50.083316+08:00",
+  "updated_at": "2026-08-16T10:21:12.344070+08:00",
   "timezone": "Asia/Shanghai",
   "strategy": {
     "name": "示例：温和动量筛选",
@@ -20,6 +20,6 @@
   },
   "source": "Tushare A股日线（盘后数据）",
   "status": "FAILED",
-  "reason": "抱歉，您没有接口(daily)访问权限，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。",
+  "reason": "HTTP Error 502: Bad Gateway",
   "stocks": []
 }
