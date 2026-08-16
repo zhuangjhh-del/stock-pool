@@ -1,6 +1,6 @@
 {
   "run_id": "2026-08-14",
-  "updated_at": "2026-08-16T15:35:32.507406+08:00",
+  "updated_at": "2026-08-16T15:48:43.415975+08:00",
   "timezone": "Asia/Shanghai",
   "strategy": {
     "name": "示例：温和动量筛选",
@@ -22,20 +22,89 @@
   "status": "SUCCESS",
   "total_scanned": 5206,
   "market_weather": {
-    "status": "UNAVAILABLE",
-    "label": "数据不足",
-    "reason": "无法取得三大指数20日均线数据：'NoneType' object has no attribute 'index_daily'",
+    "status": "READY",
+    "label": "谨慎",
+    "reason": "指数趋势或涨跌比未达到“可操作”或“空仓”条件",
     "rising": 2322,
     "falling": 2719,
     "ratio": 0.85,
-    "indexes": []
+    "indexes": [
+      {
+        "code": "000001.SH",
+        "name": "上证指数",
+        "close": 3927.18,
+        "ma20": 3870.39,
+        "above_ma20": true
+      },
+      {
+        "code": "399001.SZ",
+        "name": "深证成指",
+        "close": 14354.31,
+        "ma20": 13977.47,
+        "above_ma20": true
+      },
+      {
+        "code": "399006.SZ",
+        "name": "创业板指",
+        "close": 3626.3,
+        "ma20": 3497.17,
+        "above_ma20": true
+      }
+    ]
   },
   "hot_sectors": {
-    "status": "UNAVAILABLE",
+    "status": "READY",
     "rule": "行业板块涨幅前5；板块内涨停个股不少于3只",
-    "top_boards": [],
+    "top_boards": [
+      {
+        "board_code": "BK1626",
+        "name": "稀土",
+        "pct_chg": 5.82,
+        "leader": "中国稀土",
+        "up_count": 4,
+        "down_count": 0,
+        "limit_up_count": 1
+      },
+      {
+        "board_code": "BK1592",
+        "name": "通信线缆及配套",
+        "pct_chg": 5.33,
+        "leader": "亨通光电",
+        "up_count": 13,
+        "down_count": 0,
+        "limit_up_count": 1
+      },
+      {
+        "board_code": "BK1409",
+        "name": "激光设备",
+        "pct_chg": 4.44,
+        "leader": "逸飞激光",
+        "up_count": 11,
+        "down_count": 0,
+        "limit_up_count": 0
+      },
+      {
+        "board_code": "BK1332",
+        "name": "电子化学品Ⅲ",
+        "pct_chg": 3.75,
+        "leader": "中石科技",
+        "up_count": 36,
+        "down_count": 1,
+        "limit_up_count": 2
+      },
+      {
+        "board_code": "BK1039",
+        "name": "电子化学品Ⅱ",
+        "pct_chg": 3.75,
+        "leader": "中石科技",
+        "up_count": 36,
+        "down_count": 1,
+        "limit_up_count": 2
+      }
+    ],
     "mainlines": [],
-    "reason": "热点板块扫描失败：HTTP Error 502: Bad Gateway"
+    "reason": "按板块涨幅排序，并以涨停数量确认资金共识",
+    "selected_stocks": []
   },
   "stocks": [
     {
