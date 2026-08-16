@@ -61,7 +61,7 @@ def candidate_kline(codes: set[str], today: date) -> dict[str, list[dict]]:
     """Low-volume, timeout-bounded historical K-lines for hot-board candidates."""
     output: dict[str, list[dict]] = {}
     begin = (today - timedelta(days=110)).strftime("%Y%m%d")
-    for code in codes:
+    for code in list(codes)[:30]:
         secid = ("1." if code.endswith(".SH") else "0.") + code.split(".")[0]
         try:
             payload = _request_kline({"secid": secid, "klt": 101, "fqt": 0, "beg": begin, "end": today.strftime("%Y%m%d"), "lmt": 150, "fields1": "f1,f2,f3,f4,f5,f6", "fields2": "f51,f52,f53,f54,f55,f56,f57,f58,f59,f60,f61"})
