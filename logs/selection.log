@@ -334,3 +334,4 @@ Traceback (most recent call last):
     raise HTTPError(req.full_url, code, msg, hdrs, fp)
 urllib.error.HTTPError: HTTP Error 502: Bad Gateway
 2026-08-16 07:53:53,001 WARNING AKShare 全市场行情不可用，切换备用源：行情覆盖不足（仅 0 只）
+2026-08-17 10:18:55,169 WARNING AKShare 全市场行情不可用，切换备用源：行情覆盖不足（仅 0 只）
