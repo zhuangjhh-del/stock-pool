@@ -335,3 +335,36 @@ Traceback (most recent call last):
 urllib.error.HTTPError: HTTP Error 502: Bad Gateway
 2026-08-16 07:53:53,001 WARNING AKShare 全市场行情不可用，切换备用源：行情覆盖不足（仅 0 只）
 2026-08-17 10:18:55,169 WARNING AKShare 全市场行情不可用，切换备用源：行情覆盖不足（仅 0 只）
+2026-08-18 10:04:03,763 WARNING AKShare 全市场行情不可用，切换备用源：行情覆盖不足（仅 0 只）
+2026-08-18 10:04:21,851 WARNING 新浪全市场行情不可用，切换备用源：新浪行情覆盖不足（仅 1520 只）
+2026-08-18 10:04:22,925 WARNING 东方财富全市场行情不可用：HTTP Error 502: Bad Gateway
+2026-08-18 10:04:22,925 ERROR selection attempt failed
+Traceback (most recent call last):
+  File "/home/runner/work/stock-pool/stock-pool/scripts/run_selection.py", line 247, in execute
+    rows, pro, source = fetch_daily(target_day.strftime("%Y%m%d"))
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/stock-pool/stock-pool/scripts/run_selection.py", line 95, in fetch_daily
+    raise RuntimeError("；".join(errors))
+RuntimeError: AKShare：行情覆盖不足（仅 0 只）；新浪：新浪行情覆盖不足（仅 1520 只）；东方财富：HTTP Error 502: Bad Gateway
+2026-08-18 10:04:43,833 WARNING AKShare 全市场行情不可用，切换备用源：Can not decode value starting with character '<'
+2026-08-18 10:04:58,568 WARNING 新浪全市场行情不可用，切换备用源：新浪行情覆盖不足（仅 0 只）
+2026-08-18 10:04:59,636 WARNING 东方财富全市场行情不可用：HTTP Error 502: Bad Gateway
+2026-08-18 10:04:59,636 ERROR selection attempt failed
+Traceback (most recent call last):
+  File "/home/runner/work/stock-pool/stock-pool/scripts/run_selection.py", line 247, in execute
+    rows, pro, source = fetch_daily(target_day.strftime("%Y%m%d"))
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/stock-pool/stock-pool/scripts/run_selection.py", line 95, in fetch_daily
+    raise RuntimeError("；".join(errors))
+RuntimeError: AKShare：Can not decode value starting with character '<'；新浪：新浪行情覆盖不足（仅 0 只）；东方财富：HTTP Error 502: Bad Gateway
+2026-08-18 10:06:01,777 WARNING AKShare 全市场行情不可用，切换备用源：Can not decode value starting with character '<'
+2026-08-18 10:06:17,490 WARNING 新浪全市场行情不可用，切换备用源：新浪行情覆盖不足（仅 0 只）
+2026-08-18 10:06:37,748 WARNING 东方财富全市场行情不可用：<urlopen error _ssl.c:993: The handshake operation timed out>
+2026-08-18 10:06:37,749 ERROR selection attempt failed
+Traceback (most recent call last):
+  File "/home/runner/work/stock-pool/stock-pool/scripts/run_selection.py", line 247, in execute
+    rows, pro, source = fetch_daily(target_day.strftime("%Y%m%d"))
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/stock-pool/stock-pool/scripts/run_selection.py", line 95, in fetch_daily
+    raise RuntimeError("；".join(errors))
+RuntimeError: AKShare：Can not decode value starting with character '<'；新浪：新浪行情覆盖不足（仅 0 只）；东方财富：<urlopen error _ssl.c:993: The handshake operation timed out>
