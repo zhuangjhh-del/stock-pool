@@ -368,3 +368,5 @@ Traceback (most recent call last):
   File "/home/runner/work/stock-pool/stock-pool/scripts/run_selection.py", line 95, in fetch_daily
     raise RuntimeError("；".join(errors))
 RuntimeError: AKShare：Can not decode value starting with character '<'；新浪：新浪行情覆盖不足（仅 0 只）；东方财富：<urlopen error _ssl.c:993: The handshake operation timed out>
+2026-08-19 10:04:32,292 WARNING AKShare 全市场行情不可用，切换备用源：行情覆盖不足（仅 0 只）
+2026-08-19 10:04:48,946 WARNING 新浪全市场行情不可用，切换备用源：新浪行情覆盖不足（仅 2240 只）
