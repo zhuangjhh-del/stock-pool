@@ -446,3 +446,4 @@ RuntimeError: AKShare：Can not decode value starting with character '<'；新�
 2026-09-03 09:18:56,884 WARNING AKShare 全市场行情不可用，切换备用源：行情覆盖不足（仅 0 只）
 2026-09-04 09:18:18,486 WARNING AKShare 全市场行情不可用，切换备用源：行情覆盖不足（仅 0 只）
 2026-09-07 09:19:15,143 WARNING AKShare 全市场行情不可用，切换备用源：行情覆盖不足（仅 0 只）
+2026-09-08 13:30:30,726 WARNING AKShare 全市场行情不可用，切换备用源：行情覆盖不足（仅 0 只）
