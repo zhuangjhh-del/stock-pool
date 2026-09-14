@@ -482,3 +482,4 @@ Traceback (most recent call last):
     raise RuntimeError("；".join(errors))
 RuntimeError: AKShare：Can not decode value starting with character '<'；新浪：新浪行情覆盖不足（仅 0 只）；东方财富：HTTP Error 502: Bad Gateway
 2026-09-11 13:31:26,839 WARNING AKShare 全市场行情不可用，切换备用源：行情覆盖不足（仅 0 只）
+2026-09-14 15:56:05,334 WARNING AKShare 全市场行情不可用，切换备用源：('Connection aborted.', ConnectionResetError(104, 'Connection reset by peer'))
