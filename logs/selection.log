@@ -524,3 +524,4 @@ RuntimeError: AKShare：Can not decode value starting with character '<'；新�
 2026-09-21 15:52:43,953 WARNING AKShare 全市场行情不可用，切换备用源：行情覆盖不足（仅 0 只）
 2026-09-22 14:01:23,245 WARNING AKShare 全市场行情不可用，切换备用源：行情覆盖不足（仅 0 只）
 2026-09-23 14:13:13,437 WARNING AKShare 全市场行情不可用，切换备用源：HTTPConnectionPool(host='vip.stock.finance.sina.com.cn', port=80): Read timed out. (read timeout=15)
+2026-09-24 14:11:15,385 WARNING AKShare 全市场行情不可用，切换备用源：行情覆盖不足（仅 0 只）
