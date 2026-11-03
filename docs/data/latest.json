@@ -1,6 +1,6 @@
 {
-  "run_id": "2026-11-03",
-  "updated_at": "2026-11-03T03:24:35.047248+08:00",
+  "run_id": "2026-11-04",
+  "updated_at": "2026-11-04T00:57:36.889071+08:00",
   "timezone": "Asia/Shanghai",
   "strategy": {
     "name": "示例：温和动量筛选",
@@ -20,314 +20,371 @@
   },
   "source": "新浪财经全市场实时行情（研究展示）",
   "status": "SUCCESS",
-  "total_scanned": 5219,
+  "total_scanned": 5218,
   "market_weather": {
     "status": "READY",
-    "label": "谨慎",
-    "reason": "指数趋势或涨跌比未达到“可操作”或“空仓”条件",
-    "rising": 4381,
-    "falling": 767,
-    "ratio": 5.71,
+    "label": "空仓",
+    "reason": "三大指数均跌破20日均线，且涨跌比小于1:1",
+    "rising": 2022,
+    "falling": 3045,
+    "ratio": 0.66,
     "indexes": [
       {
         "code": "000001.SH",
         "name": "上证指数",
-        "close": 3638.03,
-        "ma20": 3726.55,
+        "close": 3608.1,
+        "ma20": 3715.43,
         "above_ma20": false
       },
       {
         "code": "399001.SZ",
         "name": "深证成指",
-        "close": 11010.68,
-        "ma20": 11855.55,
+        "close": 10876.99,
+        "ma20": 11754.3,
         "above_ma20": false
       },
       {
         "code": "399006.SZ",
         "name": "创业板指",
-        "close": 2458.7,
-        "ma20": 2767.73,
+        "close": 2391.65,
+        "ma20": 2730.18,
         "above_ma20": false
       }
     ]
   },
   "hot_sectors": {
-    "status": "UNAVAILABLE",
+    "status": "READY",
     "rule": "行业板块涨幅前5；板块内涨停个股不少于3只",
-    "top_boards": [],
-    "mainlines": [],
-    "reason": "热点板块扫描失败：HTTP Error 502: Bad Gateway"
+    "top_boards": [
+      {
+        "board_code": "BK1556",
+        "name": "教育运营及其他",
+        "pct_chg": 9.84,
+        "leader": "博瑞传播",
+        "up_count": 1,
+        "down_count": 1,
+        "limit_up_count": 1
+      },
+      {
+        "board_code": "BK1469",
+        "name": "涂料",
+        "pct_chg": 5.07,
+        "leader": "三棵树",
+        "up_count": 2,
+        "down_count": 0,
+        "limit_up_count": 1
+      },
+      {
+        "board_code": "BK1412",
+        "name": "氨纶",
+        "pct_chg": 4.17,
+        "leader": "华峰化学",
+        "up_count": 1,
+        "down_count": 0,
+        "limit_up_count": 0
+      },
+      {
+        "board_code": "BK1296",
+        "name": "视频媒体",
+        "pct_chg": 3.89,
+        "leader": "芒果超媒",
+        "up_count": 1,
+        "down_count": 0,
+        "limit_up_count": 0
+      },
+      {
+        "board_code": "BK1306",
+        "name": "蓄电池及其他电池",
+        "pct_chg": 3.76,
+        "leader": "圣阳股份",
+        "up_count": 7,
+        "down_count": 3,
+        "limit_up_count": 3
+      }
+    ],
+    "mainlines": [
+      {
+        "board_code": "BK1306",
+        "name": "蓄电池及其他电池",
+        "pct_chg": 3.76,
+        "leader": "圣阳股份",
+        "up_count": 7,
+        "down_count": 3,
+        "limit_up_count": 3
+      }
+    ],
+    "reason": "按板块涨幅排序，并以涨停数量确认资金共识",
+    "selected_stocks": []
   },
   "stocks": [
     {
-      "ts_code": "600551.SH",
+      "ts_code": "002249.SZ",
       "name": "—",
-      "close": 7.49,
-      "pct_chg": 7.0,
-      "amount_yuan": 141083899,
-      "price_position": 0.897,
-      "reason": "满足价格、成交额、涨幅和日内强度阈值"
-    },
-    {
-      "ts_code": "002517.SZ",
-      "name": "—",
-      "close": 16.07,
-      "pct_chg": 6.99,
-      "amount_yuan": 1187621950,
-      "price_position": 0.89,
-      "reason": "满足价格、成交额、涨幅和日内强度阈值"
-    },
-    {
-      "ts_code": "605118.SH",
-      "name": "—",
-      "close": 37.2,
-      "pct_chg": 6.99,
-      "amount_yuan": 605635979,
-      "price_position": 0.852,
-      "reason": "满足价格、成交额、涨幅和日内强度阈值"
-    },
-    {
-      "ts_code": "600300.SH",
-      "name": "—",
-      "close": 3.06,
-      "pct_chg": 6.99,
-      "amount_yuan": 190014829,
-      "price_position": 0.696,
-      "reason": "满足价格、成交额、涨幅和日内强度阈值"
-    },
-    {
-      "ts_code": "600172.SH",
-      "name": "—",
-      "close": 11.35,
-      "pct_chg": 6.97,
-      "amount_yuan": 1642799013,
-      "price_position": 0.808,
-      "reason": "满足价格、成交额、涨幅和日内强度阈值"
-    },
-    {
-      "ts_code": "688610.SH",
-      "name": "—",
-      "close": 70.0,
-      "pct_chg": 6.97,
-      "amount_yuan": 195667005,
-      "price_position": 0.645,
-      "reason": "满足价格、成交额、涨幅和日内强度阈值"
-    },
-    {
-      "ts_code": "300002.SZ",
-      "name": "—",
-      "close": 8.15,
-      "pct_chg": 6.96,
-      "amount_yuan": 458596408,
-      "price_position": 0.907,
-      "reason": "满足价格、成交额、涨幅和日内强度阈值"
-    },
-    {
-      "ts_code": "000802.SZ",
-      "name": "—",
-      "close": 3.69,
-      "pct_chg": 6.96,
-      "amount_yuan": 255393130,
-      "price_position": 1.0,
-      "reason": "满足价格、成交额、涨幅和日内强度阈值"
-    },
-    {
-      "ts_code": "002264.SZ",
-      "name": "—",
-      "close": 6.3,
-      "pct_chg": 6.96,
-      "amount_yuan": 212130310,
-      "price_position": 0.925,
-      "reason": "满足价格、成交额、涨幅和日内强度阈值"
-    },
-    {
-      "ts_code": "300925.SZ",
-      "name": "—",
-      "close": 13.37,
-      "pct_chg": 6.96,
-      "amount_yuan": 144666234,
-      "price_position": 0.875,
-      "reason": "满足价格、成交额、涨幅和日内强度阈值"
-    },
-    {
-      "ts_code": "300751.SZ",
-      "name": "—",
-      "close": 127.31,
-      "pct_chg": 6.94,
-      "amount_yuan": 1067384511,
-      "price_position": 0.84,
-      "reason": "满足价格、成交额、涨幅和日内强度阈值"
-    },
-    {
-      "ts_code": "002178.SZ",
-      "name": "—",
-      "close": 4.62,
-      "pct_chg": 6.94,
-      "amount_yuan": 194711118,
-      "price_position": 0.857,
-      "reason": "满足价格、成交额、涨幅和日内强度阈值"
-    },
-    {
-      "ts_code": "300840.SZ",
-      "name": "—",
-      "close": 14.95,
-      "pct_chg": 6.94,
-      "amount_yuan": 166008634,
-      "price_position": 0.944,
-      "reason": "满足价格、成交额、涨幅和日内强度阈值"
-    },
-    {
-      "ts_code": "002881.SZ",
-      "name": "—",
-      "close": 40.26,
+      "close": 7.87,
       "pct_chg": 6.93,
-      "amount_yuan": 412705592,
-      "price_position": 0.798,
+      "amount_yuan": 2187803092,
+      "price_position": 0.758,
       "reason": "满足价格、成交额、涨幅和日内强度阈值"
     },
     {
-      "ts_code": "688584.SH",
+      "ts_code": "603477.SH",
       "name": "—",
-      "close": 18.35,
-      "pct_chg": 6.93,
-      "amount_yuan": 180239384,
-      "price_position": 0.812,
-      "reason": "满足价格、成交额、涨幅和日内强度阈值"
-    },
-    {
-      "ts_code": "000776.SZ",
-      "name": "—",
-      "close": 19.3,
-      "pct_chg": 6.92,
-      "amount_yuan": 2090216809,
-      "price_position": 0.854,
-      "reason": "满足价格、成交额、涨幅和日内强度阈值"
-    },
-    {
-      "ts_code": "603881.SH",
-      "name": "—",
-      "close": 20.26,
-      "pct_chg": 6.91,
-      "amount_yuan": 567175603,
-      "price_position": 0.815,
-      "reason": "满足价格、成交额、涨幅和日内强度阈值"
-    },
-    {
-      "ts_code": "300529.SZ",
-      "name": "—",
-      "close": 18.91,
+      "close": 14.57,
       "pct_chg": 6.9,
-      "amount_yuan": 569878934,
+      "amount_yuan": 311962397,
+      "price_position": 0.836,
+      "reason": "满足价格、成交额、涨幅和日内强度阈值"
+    },
+    {
+      "ts_code": "301565.SZ",
+      "name": "—",
+      "close": 15.54,
+      "pct_chg": 6.88,
+      "amount_yuan": 159714097,
+      "price_position": 0.687,
+      "reason": "满足价格、成交额、涨幅和日内强度阈值"
+    },
+    {
+      "ts_code": "600838.SH",
+      "name": "—",
+      "close": 12.55,
+      "pct_chg": 6.81,
+      "amount_yuan": 1577884413,
       "price_position": 0.893,
       "reason": "满足价格、成交额、涨幅和日内强度阈值"
     },
     {
-      "ts_code": "300213.SZ",
+      "ts_code": "301662.SZ",
       "name": "—",
-      "close": 6.66,
-      "pct_chg": 6.9,
-      "amount_yuan": 295598476,
-      "price_position": 0.722,
+      "close": 58.12,
+      "pct_chg": 6.62,
+      "amount_yuan": 311860510,
+      "price_position": 0.626,
       "reason": "满足价格、成交额、涨幅和日内强度阈值"
     },
     {
-      "ts_code": "600880.SH",
+      "ts_code": "603486.SH",
       "name": "—",
-      "close": 3.89,
-      "pct_chg": 6.87,
-      "amount_yuan": 141975218,
-      "price_position": 0.944,
-      "reason": "满足价格、成交额、涨幅和日内强度阈值"
-    },
-    {
-      "ts_code": "688362.SH",
-      "name": "—",
-      "close": 37.19,
-      "pct_chg": 6.84,
-      "amount_yuan": 621999660,
-      "price_position": 0.773,
-      "reason": "满足价格、成交额、涨幅和日内强度阈值"
-    },
-    {
-      "ts_code": "300598.SZ",
-      "name": "—",
-      "close": 27.27,
-      "pct_chg": 6.82,
-      "amount_yuan": 176239379,
-      "price_position": 0.808,
-      "reason": "满足价格、成交额、涨幅和日内强度阈值"
-    },
-    {
-      "ts_code": "001326.SZ",
-      "name": "—",
-      "close": 84.0,
-      "pct_chg": 6.8,
-      "amount_yuan": 179758553,
-      "price_position": 0.893,
-      "reason": "满足价格、成交额、涨幅和日内强度阈值"
-    },
-    {
-      "ts_code": "300616.SZ",
-      "name": "—",
-      "close": 9.58,
-      "pct_chg": 6.8,
-      "amount_yuan": 157513803,
-      "price_position": 0.89,
-      "reason": "满足价格、成交额、涨幅和日内强度阈值"
-    },
-    {
-      "ts_code": "300248.SZ",
-      "name": "—",
-      "close": 8.01,
-      "pct_chg": 6.8,
-      "amount_yuan": 104491026,
+      "close": 47.08,
+      "pct_chg": 6.47,
+      "amount_yuan": 449672519,
       "price_position": 0.91,
       "reason": "满足价格、成交额、涨幅和日内强度阈值"
     },
     {
-      "ts_code": "688322.SH",
+      "ts_code": "002946.SZ",
       "name": "—",
-      "close": 106.0,
-      "pct_chg": 6.77,
-      "amount_yuan": 2063850667,
-      "price_position": 0.858,
+      "close": 16.81,
+      "pct_chg": 6.39,
+      "amount_yuan": 317536414,
+      "price_position": 0.763,
       "reason": "满足价格、成交额、涨幅和日内强度阈值"
     },
     {
-      "ts_code": "002530.SZ",
+      "ts_code": "002840.SZ",
       "name": "—",
-      "close": 6.94,
-      "pct_chg": 6.77,
-      "amount_yuan": 179926679,
-      "price_position": 0.93,
+      "close": 7.82,
+      "pct_chg": 6.39,
+      "amount_yuan": 170321498,
+      "price_position": 0.823,
       "reason": "满足价格、成交额、涨幅和日内强度阈值"
     },
     {
-      "ts_code": "688023.SH",
+      "ts_code": "605296.SH",
       "name": "—",
-      "close": 42.92,
-      "pct_chg": 6.77,
-      "amount_yuan": 177764818,
-      "price_position": 0.843,
+      "close": 31.7,
+      "pct_chg": 6.38,
+      "amount_yuan": 170637039,
+      "price_position": 0.752,
       "reason": "满足价格、成交额、涨幅和日内强度阈值"
     },
     {
-      "ts_code": "300166.SZ",
+      "ts_code": "605058.SH",
       "name": "—",
-      "close": 10.42,
-      "pct_chg": 6.76,
-      "amount_yuan": 432146337,
-      "price_position": 0.808,
+      "close": 56.42,
+      "pct_chg": 6.35,
+      "amount_yuan": 1331585231,
+      "price_position": 0.792,
       "reason": "满足价格、成交额、涨幅和日内强度阈值"
     },
     {
-      "ts_code": "603666.SH",
+      "ts_code": "600745.SH",
       "name": "—",
-      "close": 25.92,
-      "pct_chg": 6.71,
-      "amount_yuan": 262381214,
-      "price_position": 0.906,
+      "close": 12.51,
+      "pct_chg": 6.29,
+      "amount_yuan": 759109501,
+      "price_position": 0.861,
+      "reason": "满足价格、成交额、涨幅和日内强度阈值"
+    },
+    {
+      "ts_code": "600436.SH",
+      "name": "—",
+      "close": 134.96,
+      "pct_chg": 6.27,
+      "amount_yuan": 969315304,
+      "price_position": 0.996,
+      "reason": "满足价格、成交额、涨幅和日内强度阈值"
+    },
+    {
+      "ts_code": "600266.SH",
+      "name": "—",
+      "close": 4.09,
+      "pct_chg": 6.23,
+      "amount_yuan": 254587452,
+      "price_position": 0.893,
+      "reason": "满足价格、成交额、涨幅和日内强度阈值"
+    },
+    {
+      "ts_code": "601058.SH",
+      "name": "—",
+      "close": 12.16,
+      "pct_chg": 6.11,
+      "amount_yuan": 1074231245,
+      "price_position": 0.739,
+      "reason": "满足价格、成交额、涨幅和日内强度阈值"
+    },
+    {
+      "ts_code": "301035.SZ",
+      "name": "—",
+      "close": 42.96,
+      "pct_chg": 6.1,
+      "amount_yuan": 128413918,
+      "price_position": 0.951,
+      "reason": "满足价格、成交额、涨幅和日内强度阈值"
+    },
+    {
+      "ts_code": "605318.SH",
+      "name": "—",
+      "close": 69.49,
+      "pct_chg": 6.03,
+      "amount_yuan": 315615391,
+      "price_position": 0.649,
+      "reason": "满足价格、成交额、涨幅和日内强度阈值"
+    },
+    {
+      "ts_code": "600363.SH",
+      "name": "—",
+      "close": 9.34,
+      "pct_chg": 6.02,
+      "amount_yuan": 350926551,
+      "price_position": 0.744,
+      "reason": "满足价格、成交额、涨幅和日内强度阈值"
+    },
+    {
+      "ts_code": "600039.SH",
+      "name": "—",
+      "close": 8.82,
+      "pct_chg": 6.01,
+      "amount_yuan": 309784749,
+      "price_position": 0.945,
+      "reason": "满足价格、成交额、涨幅和日内强度阈值"
+    },
+    {
+      "ts_code": "300274.SZ",
+      "name": "—",
+      "close": 75.72,
+      "pct_chg": 5.84,
+      "amount_yuan": 7228424631,
+      "price_position": 0.768,
+      "reason": "满足价格、成交额、涨幅和日内强度阈值"
+    },
+    {
+      "ts_code": "002190.SZ",
+      "name": "—",
+      "close": 22.33,
+      "pct_chg": 5.83,
+      "amount_yuan": 401151245,
+      "price_position": 0.624,
+      "reason": "满足价格、成交额、涨幅和日内强度阈值"
+    },
+    {
+      "ts_code": "001328.SZ",
+      "name": "—",
+      "close": 36.7,
+      "pct_chg": 5.83,
+      "amount_yuan": 293710120,
+      "price_position": 0.707,
+      "reason": "满足价格、成交额、涨幅和日内强度阈值"
+    },
+    {
+      "ts_code": "600801.SH",
+      "name": "—",
+      "close": 24.89,
+      "pct_chg": 5.74,
+      "amount_yuan": 679070023,
+      "price_position": 0.557,
+      "reason": "满足价格、成交额、涨幅和日内强度阈值"
+    },
+    {
+      "ts_code": "002928.SZ",
+      "name": "—",
+      "close": 6.49,
+      "pct_chg": 5.7,
+      "amount_yuan": 372170625,
+      "price_position": 0.629,
+      "reason": "满足价格、成交额、涨幅和日内强度阈值"
+    },
+    {
+      "ts_code": "003017.SZ",
+      "name": "—",
+      "close": 22.55,
+      "pct_chg": 5.67,
+      "amount_yuan": 253580215,
+      "price_position": 0.655,
+      "reason": "满足价格、成交额、涨幅和日内强度阈值"
+    },
+    {
+      "ts_code": "002286.SZ",
+      "name": "—",
+      "close": 8.47,
+      "pct_chg": 5.61,
+      "amount_yuan": 271952490,
+      "price_position": 0.754,
+      "reason": "满足价格、成交额、涨幅和日内强度阈值"
+    },
+    {
+      "ts_code": "002343.SZ",
+      "name": "—",
+      "close": 8.3,
+      "pct_chg": 5.6,
+      "amount_yuan": 1758982964,
+      "price_position": 0.551,
+      "reason": "满足价格、成交额、涨幅和日内强度阈值"
+    },
+    {
+      "ts_code": "603567.SH",
+      "name": "—",
+      "close": 4.9,
+      "pct_chg": 5.6,
+      "amount_yuan": 211551630,
+      "price_position": 0.623,
+      "reason": "满足价格、成交额、涨幅和日内强度阈值"
+    },
+    {
+      "ts_code": "688087.SH",
+      "name": "—",
+      "close": 30.93,
+      "pct_chg": 5.6,
+      "amount_yuan": 118722631,
+      "price_position": 0.758,
+      "reason": "满足价格、成交额、涨幅和日内强度阈值"
+    },
+    {
+      "ts_code": "301015.SZ",
+      "name": "—",
+      "close": 26.25,
+      "pct_chg": 5.46,
+      "amount_yuan": 659666161,
+      "price_position": 0.744,
+      "reason": "满足价格、成交额、涨幅和日内强度阈值"
+    },
+    {
+      "ts_code": "600281.SH",
+      "name": "—",
+      "close": 5.99,
+      "pct_chg": 5.46,
+      "amount_yuan": 520722614,
+      "price_position": 0.716,
       "reason": "满足价格、成交额、涨幅和日内强度阈值"
     }
   ]
