@@ -1,0 +1,31 @@
+{
+  "run_id": "2026-11-07",
+  "updated_at": "2026-11-07T00:41:37.972028+08:00",
+  "timezone": "Asia/Shanghai",
+  "strategy": {
+    "name": "示例：温和动量筛选",
+    "version": "0.1.0",
+    "max_results": 30,
+    "exclude_prefixes": [
+      "4",
+      "8"
+    ],
+    "filters": {
+      "min_close": 3.0,
+      "min_amount_thousand_yuan": 100000,
+      "min_pct_chg": 0.5,
+      "max_pct_chg": 7.0,
+      "min_price_position": 0.55
+    }
+  },
+  "source": "Tushare A股日线（盘后数据）",
+  "status": "SKIPPED",
+  "reason": "非交易日、节假日或配置的休市日",
+  "market_weather": {
+    "status": "CLOSED",
+    "label": "休市",
+    "reason": "非交易日、节假日或配置的休市日",
+    "indexes": []
+  },
+  "stocks": []
+}
